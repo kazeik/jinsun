@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="html">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="renderer" content="webkit">
+    <title>敦海文化传播</title>
+    <!--[if lt IE 9]>
+    <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!--<script src="__PUBLIC__/js/jquery.min.js"></script>-->
+    <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.bootcss.com/jquery_lazyload/1.9.7/jquery.lazyload.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="container-fluid">
+            <div class="navbar-header" style="margin: 10px;">
+                <a href="{:U('Index/index')}">
+                    <img class="lazyImg" src="__PUBLIC__/img/logo.png" data-original="__PUBLIC__/img/logo.png"
+                         width="120" height="120" style="margin-left: 25px;"></a></div>
+            <div class="nav navbar-nav navbar-left" id="bs-example-navbar-collapse-6"
+                 style="margin:20px;font-size: 24px;height: 100%">
+                <h2 style="text-align: center">新闻资讯</h2><br>
+            </div>
+        </div>
+    </div>
+    <h3 style="text-align: center;">{$data['newstitle']}</h3>
+    <h6 style="text-align: center;">发布时间:{$data['date']}</h6>
+    <h5 >{$data['newsinfo']}</h5>
+</div>
+</body>
+</html>

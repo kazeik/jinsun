@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="html">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="renderer" content="webkit">
+    <title>敦海文化传播</title>
+    <!--[if lt IE 9]>
+    <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!--<script src="__PUBLIC__/js/jquery.min.js"></script>-->
+    <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.bootcss.com/jquery_lazyload/1.9.7/jquery.lazyload.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script type="text/javascript">
+        function reflashdata(typeid) {
+            $.post("{:U('Actor/getActorByType')}", {'id': typeid}, function (data) {
+                parserdata(data)
+            });
+        }
+
+        function getActorsByName(name) {
+            if(name.length==0){
+                alert("名字不能为空")
+                return;
+            }
+            $.post("{:U('Actor/getActorsByName')}", {'name': name}, function (data) {
+                parserdata(data)
+            });
+        }
+
+        function parserdata(data) {
+//            {"actors":[{"id":"28","typeid":"2","actorname":"\u66fe\u60dc-\u8bb2\u771f\u7684","actorinfo":null,"country":null,"avatar":"28"}],"pagenum":0}
+            var temphtml = '';
+            var actors = data['actors'];
+            var pagenum = data['pagenum'];
+            for (var i = 0; i < actors.length; i++) {
+                var item = actors[i];
+                var id = item['id'];
+                var avatar = item['avatar'];
+                var type = item['type'];
+                var actorname = item['actorname'];
+                temphtml += "<div class=\"col-sm-6 col-md-4\"><div class=\"thumbnail\"><a href={:U('ActorInfo/index',array('uid'=>id))}>" +
+                        "<img src=\"__PUBLIC__/img/avatar/" + avatar + ".jpg\" width=\"400px\" height=\"100px\"><div class=\"caption\">" +
+                        "<h4 class='text-center'>" + actorname + "</h4><p class='text-center'>" + type + "</p></div></a></div></div>";
+            }
+            $('#actorlist').html(temphtml);
+
+            var temppagehtml = '';
+            for (var i = 0; i < pagenum; i++) {
+                var pageindex = i + 1;
+                temppagehtml += "<li><a href=\"#\" aria-label=\"Previous\"><span aria-hidden=\"true\">&laquo;</span></a></li>" +
+                        "<li><a href=\"{:U('Actor/index',array('page'=>" + pageindex + ",'pagesize'=>10))}\">"+pageindex+"</a></li><li><a href=\"#\" aria-label=\"Next\">" +
+                        "<span aria-hidden=\"true\">&raquo;</span></a></li>";
+            }
+            $('#pageination').html(temppagehtml);
+        }
+
+    </script>
+</head>
+
+<body>
+
+<div class="container-fluid">
+    <!--首页标题-->
+    <div class="row">
+        <div class="container-fluid">
+            <div class="navbar-header" style="margin: 10px;">
+                <a href="{:U('Index/index')}">
+                    <img class="lazyImg" src="__PUBLIC__/img/logo.png" data-original="__PUBLIC__/img/logo.png"
+                         width="120" height="120" style="margin-left: 25px;"></a></div>
+            <div class="nav navbar-nav navbar-left" id="bs-example-navbar-collapse-6"
+                 style="margin:20px;font-size: 24px;height: 100%">
+                <h2 style="text-align: center">艺人名录</h2><br>
+            </div>
+            <div class="col-md-3 nav navbar-nav navbar-right">
+                <div class="row">
+                    <form class="navbar-form navbar-left" role="search" onsubmit="getActorsByName($('#actorname').val());return false">
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="请输入艺人名称.." id="actorname">
+                        </div>
+                        <button type="submit" class="btn btn-default" id="actor_search">搜索</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!--艺人分类-->
+    <div class="row-center" id="actortypes">
+        <foreach name="data['actortypes']" item="type">
+            <button type="button" class="btn btn-primary btn-sm" style='margin: 10px;'
+                    onclick="reflashdata({$type['id']})">{$type['type']}
+            </button>
+        </foreach>
+    </div>
+    <br>
+    <!--艺人表-->
+    <div>
+        <!--九宫格的艺人列表,3*3-->
+        <div class="row" id="actorlist">
+            <foreach name="data['actors']" item="actor">
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail">
+                        <a href={:U('ActorInfo/index',array('uid'=>$actor['id']))}>
+                            <img src="__PUBLIC__/img/avatar/{$actor['avatar']}.jpg" alt="..." width="400px"
+                                 height="100px">
+                            <div class="caption">
+                                <h4 class='text-center'>{$actor['actorname']}</h4>
+                                <p class='text-center'>{$actor['type']}</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </foreach>
+        </div>
+    </div>
+    <nav aria-label="Page navigation" class="nav navbar-nav navbar-right" style="margin-right: 30px;">
+        <ul class="pagination" id="pageination">
+            <li>
+                <a href="#" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <foreach name="data['pagenum']" item="page">
+                <li>
+                    <a href="{:U('Actor/index',array('page'=>$page,'pagesize'=>10))}">{$page}</a>
+                </li>
+            </foreach>
+            <li>
+                <a href="#" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+</body>
+</html>
